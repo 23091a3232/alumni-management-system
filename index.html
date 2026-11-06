@@ -4,196 +4,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Booking System</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Alumni Management System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <header>
-        <nav class="navbar">
-            <h2>Travel<span>Ease</span></h2>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#places">Places</a></li>
-                <li><a href="#packages">Packages</a></li>
-                <li><a href="#booking">Booking</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<header class="header">
+    <div>
+        <h1>Alumni Connect</h1>
+        <p>Alumni Management System</p>
+    </div>
+    <span class="badge">College Alumni Portal</span>
+</header>
 
-    <!-- Home Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1>Explore The World With Us</h1>
-            <p>Discover beautiful destinations and enjoy
-               unforgettable travel experiences.</p>
-            <a href="#places" class="btn">Explore Now</a>
+<nav>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#profiles">Alumni</a>
+    <a href="#events">Events</a>
+    <a href="#contacts">Contacts</a>
+</nav>
+
+<main>
+    <section id="dashboard" class="welcome">
+        <h2>Welcome to Alumni Connect</h2>
+        <p>Connect with alumni, explore events, and stay connected with your college.</p>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <h3 id="totalAlumni">0</h3>
+            <p>Total Alumni</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="totalEvents">0</h3>
+            <p>Upcoming Events</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="totalContacts">0</h3>
+            <p>Alumni Contacts</p>
         </div>
     </section>
 
-    <!-- Places Section -->
-    <section id="places" class="section">
-        <h2>Popular Tourist Places</h2>
+    <section id="profiles" class="section">
+        <h2>Alumni Profile Management</h2>
 
-        <div class="container">
+        <form id="alumniForm">
+            <input type="hidden" id="editId">
 
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600"
-                     alt="Taj Mahal">
-                <h3>Agra</h3>
-                <p>Explore the beautiful Taj Mahal.</p>
-                <button class="select-place" data-place="Agra">
-                    Select Place
-                </button>
+            <div class="form-grid">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="Email Address" required>
+                <input type="tel" id="phone" placeholder="Phone Number" required>
+                <input type="text" id="department" placeholder="Department" required>
+                <input type="number" id="year" placeholder="Graduation Year" min="1900" max="2100" required>
+                <input type="text" id="job" placeholder="Current Job / Company">
             </div>
 
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600"
-                     alt="Mumbai">
-                <h3>Mumbai</h3>
-                <p>Experience the city of dreams.</p>
-                <button class="select-place" data-place="Mumbai">
-                    Select Place
-                </button>
-            </div>
-
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1595815771614-ade9d652a65d?w=600"
-                     alt="Kerala">
-                <h3>Kerala</h3>
-                <p>Enjoy beautiful backwaters and nature.</p>
-                <button class="select-place" data-place="Kerala">
-                    Select Place
-                </button>
-            </div>
-
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=600"
-                     alt="Goa">
-                <h3>Goa</h3>
-                <p>Enjoy beaches and beautiful sunsets.</p>
-                <button class="select-place" data-place="Goa">
-                    Select Place
-                </button>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Packages Section -->
-    <section id="packages" class="section packages">
-        <h2>Our Travel Packages</h2>
-
-        <div class="container">
-
-            <div class="card package-card">
-                <h3>Basic Package</h3>
-                <h2>₹4,999</h2>
-                <p>2 Days / 1 Night</p>
-                <p>Hotel accommodation</p>
-                <p>Local sightseeing</p>
-                <button class="select-package"
-                    data-package="Basic Package" data-price="4999">
-                    Book Package
-                </button>
-            </div>
-
-            <div class="card package-card">
-                <h3>Standard Package</h3>
-                <h2>₹9,999</h2>
-                <p>4 Days / 3 Nights</p>
-                <p>Hotel accommodation</p>
-                <p>Food and sightseeing</p>
-                <button class="select-package"
-                    data-package="Standard Package" data-price="9999">
-                    Book Package
-                </button>
-            </div>
-
-            <div class="card package-card">
-                <h3>Premium Package</h3>
-                <h2>₹14,999</h2>
-                <p>6 Days / 5 Nights</p>
-                <p>Luxury accommodation</p>
-                <p>Food and transportation</p>
-                <button class="select-package"
-                    data-package="Premium Package" data-price="14999">
-                    Book Package
-                </button>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Booking Section -->
-    <section id="booking" class="section">
-        <h2>Book Your Trip</h2>
-
-        <form id="bookingForm">
-
-            <label>Full Name</label>
-            <input type="text" id="name"
-                   placeholder="Enter your name" required>
-
-            <label>Email Address</label>
-            <input type="email" id="email"
-                   placeholder="Enter your email" required>
-
-            <label>Phone Number</label>
-            <input type="tel" id="phone"
-                   placeholder="Enter 10-digit mobile number"
-                   pattern="[0-9]{10}" required>
-
-            <label>Select Destination</label>
-            <select id="destination" required>
-                <option value="">Choose Destination</option>
-                <option value="Agra">Agra</option>
-                <option value="Mumbai">Mumbai</option>
-                <option value="Kerala">Kerala</option>
-                <option value="Goa">Goa</option>
-            </select>
-
-            <label>Select Package</label>
-            <select id="package" required>
-                <option value="">Choose Package</option>
-                <option value="Basic Package">Basic Package</option>
-                <option value="Standard Package">Standard Package</option>
-                <option value="Premium Package">Premium Package</option>
-            </select>
-
-            <label>Travel Date</label>
-            <input type="date" id="date" required>
-
-            <label>Number of Travellers</label>
-            <input type="number" id="travellers"
-                   min="1" max="20" value="1" required>
-
-            <button type="submit" class="btn submit-btn">
-                Confirm Booking
-            </button>
-
+            <button type="submit" id="submitBtn">Add Alumni</button>
+            <button type="reset" class="secondary" id="resetBtn">Clear Form</button>
         </form>
 
-        <div id="confirmation" class="confirmation"
-             aria-live="polite"></div>
+        <input type="search" id="search" placeholder="Search alumni by name or department">
+
+        <div id="alumniList" class="cards"></div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <h2>Contact Us</h2>
-        <p>Email: travel@example.com</p>
-        <p>Phone: 9876543210</p>
-        <p>Address: India</p>
+    <section id="events" class="section">
+        <h2>Alumni Events</h2>
+
+        <form id="eventForm">
+            <input type="text" id="eventName" placeholder="Event Name" required>
+            <input type="date" id="eventDate" required>
+            <input type="text" id="eventVenue" placeholder="Event Venue" required>
+            <button type="submit">Add Event</button>
+        </form>
+
+        <div id="eventList" class="cards"></div>
     </section>
 
-    <footer>
-        <p>© 2026 TravelEase. All Rights Reserved.</p>
-        <p>Travel Booking System Mini Project</p>
-    </footer>
+    <section id="contacts" class="section">
+        <h2>Alumni Contact Directory</h2>
+        <p>Contact details of registered alumni are available in their profiles.</p>
+        <div id="contactList" class="cards"></div>
+    </section>
+</main>
 
-    <script src="js/script.js"></script>
+<footer>
+    <p>Alumni Connect | Alumni Management System</p>
+    <p>Developed as a GitHub Team Collaboration Mini Project</p>
+</footer>
 
+<script src="script.js"></script>
 </body>
 </html>
