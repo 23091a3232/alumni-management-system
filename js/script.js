@@ -1,0 +1,142 @@
+// Set minimum travel date to today
+const travelDate = document.getElementById("date");
+
+const today = new Date();
+const dateString =
+    today.getFullYear() + "-" +
+    String(today.getMonth() + 1).padStart(2, "0") + "-" +
+    String(today.getDate()).padStart(2, "0");
+
+travelDate.min = dateString;
+
+
+// Select tourist place
+const placeButtons = document.querySelectorAll(".select-place");
+
+placeButtons.forEach(function(button) {
+    button.addEventListener("click", function() {
+
+        const place = this.getAttribute("data-place");
+
+        document.getElementById("destination").value = place;
+
+        document.getElementById("booking").scrollIntoView({
+            behavior: "smooth"
+        });
+
+    });
+});
+
+
+// Select travel package
+const packageButtons = document.querySelectorAll(".select-package");
+
+packageButtons.forEach(function(button) {
+    button.addEventListener("click", function() {
+
+        const packageName =
+            this.getAttribute("data-package");
+
+        document.getElementById("package").value =
+            packageName;
+
+        document.getElementById("booking").scrollIntoView({
+            behavior: "smooth"
+        });
+
+    });
+});
+
+
+// Booking Form Submission
+const bookingForm = document.getElementById("bookingForm");
+
+bookingForm.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    // Get user details
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+
+    const destination =
+        document.getElementById("destination").value;
+
+    const packageName =
+        document.getElementById("package").value;
+
+    const date = document.getElementById("date").value;
+
+    const travellers =
+        Number(document.getElementById("travellers").value);
+
+    // Validate phone number
+    if (!/^[0-9]{10}$/.test(phone)) {
+        alert("Please enter a valid 10-digit phone number.");
+        return;
+    }
+
+    // Validate number of travellers
+    if (!Number.isInteger(travellers) ||
+        travellers < 1 || travellers > 20) {
+
+        alert("Please enter between 1 and 20 travellers.");
+        return;
+    }
+
+    // Package prices
+    const prices = {
+        "Basic Package": 4999,
+        "Standard Package": 9999,
+        "Premium Package": 14999
+    };
+
+    const totalAmount = prices[packageName] * travellers;
+
+    // Display booking confirmation
+    const confirmation =
+        document.getElementById("confirmation");
+
+    confirmation.style.display = "block";
+
+    confirmation.innerHTML = `
+        <h3>Booking Successful!</h3>
+        <p><strong>Name:</strong> ${escapeHTML(name)}</p>
+        <p><strong>Email:</strong> ${escapeHTML(email)}</p>
+        <p><strong>Phone:</strong> ${escapeHTML(phone)}</p>
+        <p><strong>Destination:</strong> ${escapeHTML(destination)}</p>
+        <p><strong>Package:</strong> ${escapeHTML(packageName)}</p>
+        <p><strong>Travel Date:</strong> ${escapeHTML(date)}</p>
+        <p><strong>Travellers:</strong> ${travellers}</p>
+        <p><strong>Total Amount:</strong> ₹${totalAmount.toLocaleString("en-IN")}</p>
+        <h4>Thank you for choosing TravelEase!</h4>
+    `;
+
+    // Reset form after displaying confirmation
+    bookingForm.reset();
+
+    // Keep minimum date after reset
+    travelDate.min = dateString;
+
+    confirmation.scrollIntoView({
+        behavior: "smooth"
+    });
+
+});
+
+
+// Prevent HTML injection in displayed text
+function escapeHTML(value) {
+    return value.replace(/[&<>"']/g, function(character) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
+
+        return entities[character];
+    });
+}
