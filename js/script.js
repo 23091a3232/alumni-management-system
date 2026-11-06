@@ -1,142 +1,243 @@
-// Set minimum travel date to today
-const travelDate = document.getElementById("date");
 
-const today = new Date();
-const dateString =
-    today.getFullYear() + "-" +
-    String(today.getMonth() + 1).padStart(2, "0") + "-" +
-    String(today.getDate()).padStart(2, "0");
+const alumniForm = document.getElementById("alumniForm");
+const eventForm = document.getElementById("eventForm");
 
-travelDate.min = dateString;
+let alumni = JSON.parse(localStorage.getItem("alumni")) || [];
+let events = JSON.parse(localStorage.getItem("events")) || [];
 
+function saveData() {
+    localStorage.setItem("alumni", JSON.stringify(alumni));
+    localStorage.setItem("events", JSON.stringify(events));
+}
 
-// Select tourist place
-const placeButtons = document.querySelectorAll(".select-place");
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
 
-placeButtons.forEach(function(button) {
-    button.addEventListener("click", function() {
+// Display alumni profiles
+function displayAlumni(list = alumni) {
+    const container = document.getElementById("alumniList");
 
-        const place = this.getAttribute("data-place");
+    container.innerHTML = "";
 
-        document.getElementById("destination").value = place;
+    if (list.length === 0) {
+        container.innerHTML = '<p class="empty">No alumni found.</p>';
+    }
 
-        document.getElementById("booking").scrollIntoView({
-            behavior: "smooth"
-        });
+    list.forEach(person => {
+        const card = document.createElement("div");
+        card.className = "card";
 
+        card.innerHTML = `
+            <h3>${escapeHTML(person.name)}</h3>
+            <p><strong>Email:</strong> ${escapeHTML(person.email)}</p>
+            <p><strong>Phone:</strong> ${escapeHTML(person.phone)}</p>
+            <p><strong>Department:</strong> ${escapeHTML(person.department)}</p>
+            <p><strong>Graduation:</strong> ${escapeHTML(person.year)}</p>
+            <p><strong>Job:</strong> ${escapeHTML(person.job || "Not specified")}</p>
+
+            <button class="edit-btn" onclick="editAlumni(${person.id})">
+                Edit
+            </button>
+
+            <button class="delete-btn" onclick="deleteAlumni(${person.id})">
+                Delete
+            </button>
+        `;
+
+        container.appendChild(card);
     });
-});
 
+    updateStats();
+}
 
-// Select travel package
-const packageButtons = document.querySelectorAll(".select-package");
-
-packageButtons.forEach(function(button) {
-    button.addEventListener("click", function() {
-
-        const packageName =
-            this.getAttribute("data-package");
-
-        document.getElementById("package").value =
-            packageName;
-
-        document.getElementById("booking").scrollIntoView({
-            behavior: "smooth"
-        });
-
-    });
-});
-
-
-// Booking Form Submission
-const bookingForm = document.getElementById("bookingForm");
-
-bookingForm.addEventListener("submit", function(event) {
-
+// Add or update alumni
+alumniForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
-    // Get user details
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
+    const editId = document.getElementById("editId").value;
 
-    const destination =
-        document.getElementById("destination").value;
-
-    const packageName =
-        document.getElementById("package").value;
-
-    const date = document.getElementById("date").value;
-
-    const travellers =
-        Number(document.getElementById("travellers").value);
-
-    // Validate phone number
-    if (!/^[0-9]{10}$/.test(phone)) {
-        alert("Please enter a valid 10-digit phone number.");
-        return;
-    }
-
-    // Validate number of travellers
-    if (!Number.isInteger(travellers) ||
-        travellers < 1 || travellers > 20) {
-
-        alert("Please enter between 1 and 20 travellers.");
-        return;
-    }
-
-    // Package prices
-    const prices = {
-        "Basic Package": 4999,
-        "Standard Package": 9999,
-        "Premium Package": 14999
+    const person = {
+        id: editId ? Number(editId) : Date.now(),
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        department: document.getElementById("department").value.trim(),
+        year: document.getElementById("year").value,
+        job: document.getElementById("job").value.trim()
     };
 
-    const totalAmount = prices[packageName] * travellers;
+    if (editId) {
+        alumni = alumni.map(item =>
+            item.id === Number(editId) ? person : item
+        );
+    } else {
+        alumni.push(person);
+    }
 
-    // Display booking confirmation
-    const confirmation =
-        document.getElementById("confirmation");
+    saveData();
+    displayAlumni();
+    displayContacts();
 
-    confirmation.style.display = "block";
-
-    confirmation.innerHTML = `
-        <h3>Booking Successful!</h3>
-        <p><strong>Name:</strong> ${escapeHTML(name)}</p>
-        <p><strong>Email:</strong> ${escapeHTML(email)}</p>
-        <p><strong>Phone:</strong> ${escapeHTML(phone)}</p>
-        <p><strong>Destination:</strong> ${escapeHTML(destination)}</p>
-        <p><strong>Package:</strong> ${escapeHTML(packageName)}</p>
-        <p><strong>Travel Date:</strong> ${escapeHTML(date)}</p>
-        <p><strong>Travellers:</strong> ${travellers}</p>
-        <p><strong>Total Amount:</strong> ₹${totalAmount.toLocaleString("en-IN")}</p>
-        <h4>Thank you for choosing TravelEase!</h4>
-    `;
-
-    // Reset form after displaying confirmation
-    bookingForm.reset();
-
-    // Keep minimum date after reset
-    travelDate.min = dateString;
-
-    confirmation.scrollIntoView({
-        behavior: "smooth"
-    });
-
+    alumniForm.reset();
+    document.getElementById("editId").value = "";
+    document.getElementById("submitBtn").textContent = "Add Alumni";
 });
 
+// Edit alumni
+function editAlumni(id) {
+    const person = alumni.find(item => item.id === id);
 
-// Prevent HTML injection in displayed text
-function escapeHTML(value) {
-    return value.replace(/[&<>"']/g, function(character) {
-        const entities = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        };
+    if (!person) return;
 
-        return entities[character];
+    document.getElementById("editId").value = person.id;
+    document.getElementById("name").value = person.name;
+    document.getElementById("email").value = person.email;
+    document.getElementById("phone").value = person.phone;
+    document.getElementById("department").value = person.department;
+    document.getElementById("year").value = person.year;
+    document.getElementById("job").value = person.job;
+
+    document.getElementById("submitBtn").textContent = "Update Alumni";
+
+    document.getElementById("profiles").scrollIntoView({
+        behavior: "smooth"
     });
 }
+
+// Delete alumni
+function deleteAlumni(id) {
+    if (!confirm("Are you sure you want to delete this alumni?")) {
+        return;
+    }
+
+    alumni = alumni.filter(person => person.id !== id);
+
+    saveData();
+    displayAlumni();
+    displayContacts();
+}
+
+// Search alumni
+document.getElementById("search").addEventListener("input", function() {
+    const query = this.value.toLowerCase();
+
+    const filtered = alumni.filter(person =>
+        person.name.toLowerCase().includes(query) ||
+        person.department.toLowerCase().includes(query)
+    );
+
+    displayAlumni(filtered);
+});
+
+// Display alumni contacts
+function displayContacts() {
+    const container = document.getElementById("contactList");
+
+    container.innerHTML = "";
+
+    if (alumni.length === 0) {
+        container.innerHTML = '<p class="empty">No contacts available.</p>';
+    }
+
+    alumni.forEach(person => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <h3>${escapeHTML(person.name)}</h3>
+            <p>Email: ${escapeHTML(person.email)}</p>
+            <p>Phone: ${escapeHTML(person.phone)}</p>
+            <p>Department: ${escapeHTML(person.department)}</p>
+        `;
+
+        container.appendChild(card);
+    });
+
+    updateStats();
+}
+
+// Add event
+eventForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const newEvent = {
+        id: Date.now(),
+        name: document.getElementById("eventName").value.trim(),
+        date: document.getElementById("eventDate").value,
+        venue: document.getElementById("eventVenue").value.trim()
+    };
+
+    events.push(newEvent);
+
+    saveData();
+    displayEvents();
+    eventForm.reset();
+});
+
+// Display events
+function displayEvents() {
+    const container = document.getElementById("eventList");
+
+    container.innerHTML = "";
+
+    const upcoming = events
+        .filter(event => event.date >= new Date().toISOString().slice(0, 10))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+    if (upcoming.length === 0) {
+        container.innerHTML = '<p class="empty">No upcoming events.</p>';
+    }
+
+    upcoming.forEach(event => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+            <h3>${escapeHTML(event.name)}</h3>
+            <p><strong>Date:</strong> ${escapeHTML(event.date)}</p>
+            <p><strong>Venue:</strong> ${escapeHTML(event.venue)}</p>
+
+            <button class="delete-btn" onclick="deleteEvent(${event.id})">
+                Delete Event
+            </button>
+        `;
+
+        container.appendChild(card);
+    });
+
+    updateStats();
+}
+
+// Delete event
+function deleteEvent(id) {
+    if (!confirm("Delete this event?")) return;
+
+    events = events.filter(event => event.id !== id);
+
+    saveData();
+    displayEvents();
+}
+
+// Update dashboard statistics
+function updateStats() {
+    document.getElementById("totalAlumni").textContent = alumni.length;
+
+    document.getElementById("totalEvents").textContent =
+        events.filter(event =>
+            event.date >= new Date().toISOString().slice(0, 10)
+        ).length;
+
+    document.getElementById("totalContacts").textContent = alumni.length;
+}
+
+// Initial display
+displayAlumni();
+displayEvents();
+displayContacts();
